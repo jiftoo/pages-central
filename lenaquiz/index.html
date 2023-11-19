@@ -1,0 +1,293 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<link rel="stylesheet" href="assets/style.css" />
+		<title>Lena quiz</title>
+		<script src="assets/script.js" async defer></script>
+	</head>
+	<body>
+		<main>
+			<header>
+				<div class="h1"><h1>Lena quiz v0.1.1</h1></div>
+				<h3>[fill this in]</h3>
+			</header>
+			<div id="header-slot">
+				<div class="open-existing">
+					<sheet-text-input name="Sheet code" placeholder="KjeCazLZ" max-length="8" class="grid-col-auto" id="sheet-code-input"></sheet-text-input>
+					<button id="open-form" class="form-button grid-col-auto">
+						<span>&nbsp;</span>
+						<div class="submit-form-text bar grid-col-auto">Open existing</div>
+					</button>
+					<div id="open-form-not-found" class="displaynone">Not found</div>
+					<div id="open-form-bad-code" class="displaynone">Bad code</div>
+					<script>
+						document.getElementById("open-form").addEventListener("click", async () => {
+							document.getElementById("open-form-not-found").classList.add("displaynone");
+							document.getElementById("open-form-bad-code").classList.add("displaynone");
+
+							const code = document.getElementById("sheet-code-input").value;
+							if (code.length !== 8 || /^[a-zA-Z]+$/.test(code) === false) {
+								document.getElementById("open-form-bad-code").classList.remove("displaynone");
+							} else if (await checkFormExists(code)) {
+								window.location.search = `key=${code}`;
+							} else {
+								document.getElementById("open-form-not-found").classList.remove("displaynone");
+							}
+						});
+					</script>
+				</div>
+			</div>
+			<script>
+				if (new URLSearchParams(window.location.search).get("key")) {
+					document.getElementById("header-slot").outerHTML = `
+					<div class="open-existing">
+						<button id="go-back" class="form-button grid-col-2" onclick="window.location.search = ''">
+							<span>&nbsp;</span>
+							<div class="submit-form-text bar">Back to editing</div>
+						</button>
+					</div>
+					`;
+				}
+			</script>
+			<form id="main-form">
+				<h5 class="grid-col-2">Basic info:</h5>
+				<div class="collection grid-col-auto">
+					<sheet-text-input name="Name"></sheet-text-input>
+					<script>
+						window.addEventListener("load", () =>
+							document.body.style.setProperty("--sheet-input-actual-height", document.querySelector("sheet-text-input").getBoundingClientRect().height + "px")
+						);
+					</script>
+					<sheet-text-input name="Nicknames"></sheet-text-input>
+					<sheet-text-input name="Age" id="age-input"></sheet-text-input>
+					<script>
+						document.getElementById("age-input").addEventListener("input", function (ev) {
+							const age = ev.currentTarget.value;
+							const emotArray = ["👶", "🧒", "🧑", "👨", "👴", "🪦", "🧙‍♂️", "🦖"];
+							if (!/^-?\d+$/.test(age)) emot = "";
+							else if (age < 10) emot = emotArray[0];
+							else if (age < 20) emot = emotArray[1];
+							else if (age < 40) emot = emotArray[2];
+							else if (age < 60) emot = emotArray[3];
+							else if (age <= 80) emot = emotArray[4];
+							else if (age <= 100) emot = emotArray[5];
+							else if (age <= 300) emot = emotArray[6];
+							else emot = emotArray[7];
+							ev.currentTarget.name = `Age${emot}`;
+						});
+					</script>
+					<sheet-text-input name="Weight" note="kg"></sheet-text-input>
+					<sheet-select name="Sex" options="Male,Female,Special,Sexless"></sheet-select>
+				</div>
+				<div class="collection grid-col-auto">
+					<sheet-slider name="Physical age" text="Youthful,Frail" start="cyan" mid="white" end="brown"></sheet-slider>
+					<sheet-slider name="Mental age" text="Infantile,Wise" start="white" mid="pink" end="#a911a9"></sheet-slider>
+					<sheet-select name="Handedness" options="Right,Left"></sheet-select>
+					<sheet-slider name="Gender alignment" text="Masculine,Feminine" start="cyan" mid="white" end="orange"></sheet-slider>
+					<sheet-text-input name="Eye colour"></sheet-text-input>
+				</div>
+				<div class="collection grid-col-2">
+					<sheet-collapsible name="Height selector">
+						<div class="height-selector">
+							<div class="reference">
+								<div class="reference-border"></div>
+								<div class="height-counter">
+									<div class="counter">150cm</div>
+									<div class="border"></div>
+								</div>
+								<!-- <video src="assets/thiccening.webm" class="height-reference height-reference-base" style="--ref-scale-base: 1"></video> -->
+								<!-- <img src="assets/lenamid2.png" class="height-reference height-reference-base" style="--ref-scale-base: 1" /> -->
+								<img src="assets/lenaslim.png" class="height-reference height-reference-base" style="--ref-scale-base: 1" />
+								<img src="assets/human.png" class="height-reference height-reference-variable" style="--ref-scale-base: 1.33" />
+								<img src="assets/house.png" class="height-reference height-reference-variable" style="--ref-scale-base: 10" />
+								<img src="assets/eiffel.png" class="height-reference height-reference-variable" style="--ref-scale-base: 144" />
+								<img src="assets/kilimanjaro.png" class="height-reference height-reference-variable" style="--ref-scale-base: 3930" />
+								<img src="assets/earth.png" class="height-reference height-reference-variable" style="--ref-scale-base: 8494666.66" />
+								<img src="assets/sun.png" class="height-reference reference-sun height-reference-variable" style="--ref-scale-base: 971447075.43" />
+								<img src="assets/betelgeuse.png" class="height-reference reference-sun height-reference-variable" style="--ref-scale-base: 111400000000" />
+							</div>
+							<sheet-slider form="none" id="height-slider" no-label start="pink" mid="yellow" end="crimson"></sheet-slider>
+
+							<input id="height-slider-proxy" name="Height" type="text" hidden />
+
+							<div class="height-slider-tips">
+								<div>
+									<span>|</span>
+									<span>150cm</span>
+								</div>
+								<div>
+									<span>|</span>
+									<span>200cm</span>
+								</div>
+								<div>
+									<span>|</span>
+									<span>15m</span>
+								</div>
+								<div>
+									<span>|</span>
+									<span>300m</span>
+								</div>
+								<div>
+									<span>|</span>
+									<span>5km</span>
+								</div>
+								<div>
+									<span>|</span>
+									<span>12000km</span>
+								</div>
+								<div>
+									<span>|</span>
+									<span>1.3Gm</span>
+								</div>
+							</div>
+							<script>
+								setInterval(() => {
+									const displayWidth = document.querySelector(".reference-border").getBoundingClientRect().width;
+									const firstWidth = document.querySelector(".height-reference-variable").getBoundingClientRect().width;
+									const baseWidth = document.querySelector(".height-reference-base").getBoundingClientRect().width;
+									document.querySelector(".reference").style.setProperty("--actual-width", displayWidth);
+									document.querySelector(".reference").style.setProperty("--reference-offset", firstWidth + baseWidth);
+								}, 100);
+								const callback = () => {
+									const baseHeight = document.querySelector(".height-reference-base").getBoundingClientRect().height;
+									document.querySelector(".reference").style.setProperty("--actual-base-height", baseHeight);
+								};
+								document.getElementById("height-slider").addEventListener("input", () => {
+									setTimeout(callback, 0);
+								});
+								callback();
+							</script>
+							<script>
+								const f = (x) => 1 / 5000 ** ((x + Math.min(x * 10, 0.3)) ** 4);
+								document.querySelector("#height-slider-proxy").value = "150";
+								document.querySelector("#height-slider").addEventListener("input", function () {
+									document.querySelectorAll(".height-reference").forEach((v) => v.style.setProperty("--ref-scale-const-mult", (+this.value + 1) ** (1 / 4)));
+
+									function formatSIUnit(valueInCentimeters) {
+										if (valueInCentimeters < 300) {
+											return valueInCentimeters.toFixed(0) + "cm";
+										} else if (valueInCentimeters < 100000) {
+											return (valueInCentimeters / 100).toFixed(1) + "m";
+										} else if (valueInCentimeters < 100000000000) {
+											return (valueInCentimeters / 100000).toFixed(1) + "km";
+										} else {
+											return (valueInCentimeters / 100000000000).toFixed(1) + "Gm";
+										}
+									}
+									const centimetres = (1 / f(+this.value)) * 150;
+									document.querySelector("#height-slider-proxy").value = centimetres;
+									document.querySelectorAll(".height-counter > .counter").forEach((v) => (v.textContent = `${formatSIUnit(centimetres)}`));
+
+									document.querySelectorAll(".height-reference-variable").forEach((v) => v.style.setProperty("--ref-scale", f(+this.value)));
+									const video = document.querySelector(".height-reference-base");
+									video.currentTime = video.duration * +this.value;
+									if (+this.value > 0.8) {
+										document.querySelectorAll(".reference-sun").forEach((v) => (v.style.display = "block"));
+									} else {
+										document.querySelectorAll(".reference-sun").forEach((v) => (v.style.display = "none"));
+									}
+								});
+							</script>
+						</div>
+						<span>- Head sketch</span>
+					</sheet-collapsible>
+				</div>
+
+				<div class="collection grid-col-auto">
+					<h5>Voice traits:</h5>
+					<sheet-slider name="Volume" text="Quiet,Loud" start="#6ac0ff" mid="lightyellow" end="#ff5e5e"></sheet-slider>
+					<sheet-slider name="Pitch" text="Low pitch,High pitch" start="#66cdaa" mid="#ffd700" end="#ff6347"></sheet-slider>
+					<sheet-text-input name="Tone (mood)" placeholder="Cheerful, Melancholic, Sarcastic, Confident"></sheet-text-input>
+					<sheet-text-input name="Cadence (rhythm, speed variations)" placeholder="Fluid, Rapid, Authoritative"></sheet-text-input>
+					<sheet-text-input name="Accent, vocabulary choices" placeholder="Rural, Trendy, Casual, Literary"></sheet-text-input>
+					<sheet-text-input name="Formality" placeholder="Formal, Informal"></sheet-text-input>
+				</div>
+				<div class="collection grid-col-auto">
+					<h5>Physical skills:</h5>
+					<sheet-slider name="Strength" text="Weak adult,Strongman, ,Kid goku,Saitama" start="pink" mid="crimson" end="yellow"></sheet-slider>
+					<sheet-slider name="Agility" text="Grandpa,Average,Athlete, ,Santana" start="pink" mid="crimson" end="yellow"></sheet-slider>
+					<sheet-slider name="Flexibility" text="Grandma,Average,World Champion, , ,Spaceship Goku" start="pink" mid="crimson" end="yellow"></sheet-slider>
+					<sheet-slider name="Health, fitness level" text="Moderator,Normal,Great,Superhuman" start="red" mid="cyan" end="lime"></sheet-slider>
+					<sheet-slider name="Concealment ability" text="Mammoth,Man in crocs,Ninja, ,Imperceivable" start="red" mid="cyan" end="black"></sheet-slider>
+				</div>
+				<div class="collection grid-col-auto">
+					<h5>Physical appearance:</h5>
+					<sheet-text-input name="Skin colour"></sheet-text-input>
+					<sheet-text-input name="Skin texture"></sheet-text-input>
+					<sheet-text-input name="Hair length"></sheet-text-input>
+					<sheet-text-input name="Hair colour"></sheet-text-input>
+					<sheet-text-input name="Posture"></sheet-text-input>
+					<sheet-text-input name="Gait, movement habits"></sheet-text-input>
+					<sheet-text-input name="Body language, tics, expressions"></sheet-text-input>
+				</div>
+				<div class="collection grid-col-auto">
+					<h5>Intellectual skills</h5>
+					<sheet-slider
+						name="Intelligence"
+						text="Homer (simpson),High schooler, ,Homer (poet), ,"
+						note="<img src='gigabrain.jpeg' style='height: 100%' />"
+						start="lime"
+						mid="#414288"
+						end="#3265bd"
+					></sheet-slider>
+					<sheet-slider name="Creativity" text="Brick,Average,Doctor Who" start="grey" mid="pink" end="lightsalmon"></sheet-slider>
+					<sheet-text-input name="IQ" placeholder="Limbillion"></sheet-text-input>
+				</div>
+				<div class="collection grid-col-auto">
+					<h5>Morality</h5>
+					<sheet-slider name="Ethics" text="Strict,Average,None" start="green" mid="yellow" end="crimson"></sheet-slider>
+					<sheet-slider name="Morals" text="Good,Average,Bad, ,Evil" start="green" mid="yellow" end="crimson"></sheet-slider>
+				</div>
+				<div class="collection grid-col-auto" tabindex="-1">
+					<h5>Sexual traits</h5>
+					<div class="collection censor">
+						<sheet-collapsible name="Proportions selector" align-with-fields>
+							<div class="sex-selector">
+								<div class="reference">
+									<div class="border-decoration"></div>
+									<video class="ass" src="assets/ass.webm"></video>
+									<video class="titties" src="assets/tits.webm"></video>
+								</div>
+								<sheet-slider name="Breast size" text="Flat,Average,Basketballs, ,Touching ground" start="pink" mid="yellow" end="crimson"></sheet-slider>
+								<sheet-slider name="Butt size" text="Flat,Average,Kardashian, ,THICC" start="pink" mid="yellow" end="crimson"></sheet-slider>
+								<script>
+									const ass = document.querySelector(".ass");
+									const titties = document.querySelector(".titties");
+
+									const bs = document.querySelector("sheet-slider[name='Butt size']");
+									const ts = document.querySelector("sheet-slider[name='Breast size']");
+									bs.addEventListener("input", (ev) => {
+										const value = ev.currentTarget.value;
+										ass.currentTime = ass.duration * value ** 1.5;
+									});
+									ts.addEventListener("input", (ev) => {
+										const value = ev.currentTarget.value;
+										titties.currentTime = titties.duration * value ** 2;
+									});
+
+									window.addEventListener("form-loaded", () => {
+										bs.dispatchEvent(new Event("input", {bubbles: false}));
+										ts.dispatchEvent(new Event("input", {bubbles: false}));
+									});
+								</script>
+							</div>
+						</sheet-collapsible>
+						<sheet-slider name="Libido" text="Repulsed,No drive,Average,Semen demon" start="brown" mid="#ffed8c" end="white"></sheet-slider>
+					</div>
+				</div>
+				<div id="controls" style="display: contents">
+					<div class="grid-col-2 controls-separator"></div>
+					<button id="submit-form" class="form-button grid-col-auto">
+						<div class="submit-form-text bar grid-col-auto">Submit</div>
+					</button>
+					<div class="bar hidden" id="submit-key">
+						<span></span>
+						<a class="grid-col-auto"></a>
+					</div>
+				</div>
+			</form>
+		</main>
+	</body>
+</html>

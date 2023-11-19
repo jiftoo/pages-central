@@ -1,0 +1,638 @@
+@font-face {
+	font-family: "Minecraft";
+	src: url("Minecraft.otf");
+	font-weight: normal;
+}
+
+@font-face {
+	font-family: "Minecraft";
+	src: url("Minecraft-Bold.otf");
+	font-weight: bold;
+}
+
+* {
+	box-sizing: border-box;
+	font-family: "Minecraft", "Arial", serif;
+}
+
+body {
+	--bar-height: 35px;
+	--page-background: #222;
+	--page-foreground: white;
+	--bar-width: auto;
+	--max-not-width: 26ch;
+	--collection-gap: 0.75em;
+
+	overflow-x: hidden;
+
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+
+	background-color: var(--page-background);
+
+	display: flex;
+	flex-direction: row;
+	justify-content: center;
+}
+
+main {
+	max-width: 1000px;
+	width: 1000px;
+	gap: 1em;
+	display: flex;
+	flex-direction: column;
+
+	margin-bottom: 6em;
+}
+
+main > * {
+	background-color: var(--page-foreground);
+	padding: 1em;
+}
+
+footer {
+	height: 200px;
+}
+
+h1 {
+	margin: 0.33em;
+}
+
+h3 {
+	font-weight: normal;
+	padding: 1em;
+	margin: 0.33em;
+}
+
+.h1 {
+	width: 100%;
+	display: flex;
+	align-items: center;
+	gap: 1em;
+}
+
+.h1::after {
+	content: "";
+	display: block;
+	flex-grow: 1;
+	height: 40px;
+	background: linear-gradient(to right, transparent 50%, var(--page-foreground) 50%), linear-gradient(to right, orange, #ff4040);
+	background-size: 16px 2px, 100% 2px;
+}
+
+.grid-col-auto {
+	grid-column: auto;
+}
+.grid-col-2 {
+	grid-column: 1 / span 2;
+}
+
+#main-form {
+	padding-bottom: 4em;
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 1em;
+}
+
+@media (width <= 700px) {
+	#main-form {
+		grid-template-columns: 1fr;
+	}
+
+	.grid-col-auto {
+		grid-column: 1 / span 2;
+	}
+}
+
+h5 {
+	margin-bottom: 0.33em;
+	font-size: 14px;
+}
+
+.collection {
+	display: flex;
+	flex-direction: column;
+	gap: var(--collection-gap);
+	width: 100%;
+}
+
+img {
+	height: var(--bar-height);
+	border-radius: 4px;
+}
+
+.bar {
+	--gradient-1: white;
+	--gradient-2: white;
+	--gradient-3: white;
+
+	height: var(--bar-height);
+	width: var(--bar-width);
+
+	padding: 4px;
+	font-size: 14px;
+	color: rgba(0, 0, 0, 0.8);
+	border: 1px solid black;
+
+	display: flex;
+	justify-content: space-between;
+	align-items: center;
+	position: relative;
+
+	background: linear-gradient(90deg, var(--gradient-1) 0%, var(--gradient-2) 50%, var(--gradient-3) 100%);
+}
+
+.bar > input {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+	margin-bottom: 0;
+	margin-top: 0;
+	appearance: none;
+}
+
+label {
+	line-height: 1.16;
+}
+
+.sheet-slider {
+	appearance: none;
+	/* background: var(--background); */
+	background: transparent;
+	height: var(--bar-height);
+	width: calc(100% - 4px);
+}
+
+.sheet-slider::-webkit-slider-thumb {
+	z-index: 99;
+	appearance: none;
+	width: 10px;
+	height: calc(var(--bar-height) - 5px);
+	border-radius: 0;
+	border: 2px solid black;
+	background-color: rgba(255, 255, 255, 0.5);
+	transform: translateY(-1px);
+}
+
+.sheet-slider::-moz-range-thumb {
+	z-index: 99;
+	appearance: none;
+	width: 10px;
+	height: calc(var(--bar-height) - 8px);
+	border-radius: 0;
+	border: 2px solid black;
+	background-color: rgba(255, 255, 255, 0.5);
+	transform: translateY(-1px);
+}
+
+.sheet-text-input {
+	appearance: none;
+	width: 100%;
+	height: 100%;
+	border: none;
+	padding: 8px;
+}
+
+.sheet-text-input.has-note {
+	/* +2ch in both for nice looking gap and +2 in second argument to account for ellipsis width */
+	padding-right: calc(min(8px + var(--note-length) + 2ch, var(--max-not-width) + 2ch + 2ch));
+}
+
+.sheet-text-input ~ .input-note {
+	z-index: 1;
+	right: 6px;
+	position: absolute;
+	max-width: var(--max-not-width);
+	text-overflow: ellipsis;
+	overflow: hidden;
+	white-space: nowrap;
+	color: rgba(0, 0, 0, 0.5);
+}
+
+.sheet-slider ~ .input-note {
+	z-index: 0;
+	max-height: 100%;
+	height: 100%;
+}
+
+.sheet-select {
+	background-color: transparent;
+	width: 100%;
+	height: 100%;
+	border: none;
+}
+
+.height-selector {
+	border: 2px solid black;
+	padding: 4px;
+	width: calc(var(--bar-width));
+	overflow: hidden;
+	z-index: 1;
+
+	position: relative;
+}
+
+.height-selector img {
+	user-select: none;
+}
+
+.height-selector .bar {
+	width: calc(var(--bar-width) - 12px);
+}
+
+.height-selector > .reference {
+	width: fit-content;
+	min-width: calc(var(--bar-width));
+	height: 400px;
+	font-size: inherit;
+	margin-bottom: 6px;
+
+	border: none;
+	padding-left: 1em;
+
+	display: flex;
+	flex-direction: row;
+	justify-content: space-evenly;
+	align-items: end;
+
+	image-rendering: pixelated;
+}
+
+.height-selector .reference-border {
+	border: 2px solid black;
+	position: absolute;
+	top: 4px;
+	bottom: 67px;
+	left: 4px;
+	right: 4px;
+}
+
+.height-counter {
+	transform: translateY(calc(-1px * var(--actual-base-height)));
+	height: 0;
+	width: 0;
+	line-height: 0;
+	display: flex;
+	gap: 4px;
+	margin-bottom: 2px;
+}
+
+.height-counter > .counter {
+	white-space: pre;
+}
+
+.height-counter > .border {
+	min-width: calc((var(--actual-width) - 100) * 1px);
+	width: calc((var(--actual-width) - 100) * 1px);
+	border-bottom: 1px solid black;
+}
+
+.height-reference {
+	--ref-scale: 1;
+	--ref-scale-const-mult: 1;
+}
+
+.height-reference:not(.reference-border) {
+	height: calc(var(--ref-scale-base) * var(--ref-scale) * var(--ref-scale-const-mult) * min(70%, 50vw));
+	/* will-change: height, opacity; */
+	background-size: cover;
+
+	opacity: calc(min(1, var(--ref-scale) * var(--ref-scale-base) * 2));
+}
+
+.height-reference:not(:nth-child(2)) {
+	--a: calc((1 / max(0, 1e12 * (var(--ref-scale-const-mult) - 1.1806))));
+	transform: translateX(calc((1 / max(1, 1e12 * (var(--ref-scale-const-mult) - 1.1806))) * 1200px * max(0, var(--ref-scale-const-mult) - 1.15) + 22px));
+}
+
+.height-reference:not(:nth-child(3)) {
+	filter: invert(63%) sepia(59%) saturate(1969%) hue-rotate(325deg) brightness(101%) contrast(101%);
+}
+
+.height-reference:nth-child(4) {
+	/* margin-left: calc(var(--ref-scale) * 7em); */
+	margin-left: calc((var(--actual-width) - var(--reference-offset)) * 1px * var(--ref-scale) - 5em);
+}
+
+.height-reference:nth-child(5) {
+	/* margin-left: calc(min(100vw, 20vw * var(--ref-scale) * var(--ref-scale-base))); */
+	transform: translateX(33%);
+}
+
+.height-reference:nth-child(6) {
+	/* margin-left: calc(min(100vw, 20vw * var(--ref-scale) * var(--ref-scale-base))); */
+	transform: translateX(100%);
+}
+
+.height-reference:nth-child(7) {
+	/* margin-left: calc(min(100vw, 20vw * var(--ref-scale) * var(--ref-scale-base))); */
+	transform: translateX(33%);
+}
+
+.height-reference:nth-child(8) {
+	/* margin-left: calc(min(100vw, 20vw * var(--ref-scale) * var(--ref-scale-base))); */
+	transform: translateX(60%);
+}
+
+.height-reference:nth-child(9) {
+	/* margin-left: calc(min(100vw, 20vw * var(--ref-scale) * var(--ref-scale-base))); */
+	transform: translateX(33%);
+}
+
+.height-slider-tips {
+	position: relative;
+	height: 1.5em;
+}
+
+.height-slider-tips > div {
+	position: absolute;
+	top: 0;
+	left: 0;
+
+	display: flex;
+	flex-direction: column;
+	transform: translateY(-40%);
+	user-select: none;
+	pointer-events: none;
+	gap: 2px;
+}
+
+/* carefully calibrated to be relatively size-accurate to use with
+ f = (x) => 1 / 5000 ** ((x + Math.min(x * 10, 0.3)) ** 4);
+*/
+.height-slider-tips > div > span:nth-child(1) {
+	transform: translateX(4.5%);
+}
+
+.height-slider-tips > div:nth-child(1) {
+	left: 0;
+}
+
+.height-slider-tips > div:nth-child(2) {
+	left: 12.77%;
+}
+
+.height-slider-tips > div:nth-child(3) {
+	left: 42.11%;
+}
+.height-slider-tips > div:nth-child(3) > span:nth-child(2) {
+	transform: translateX(-66%);
+}
+
+.height-slider-tips > div:nth-child(4) {
+	left: 60.46%;
+}
+.height-slider-tips > div:nth-child(4) > span:nth-child(2) {
+	transform: translateX(-88%);
+}
+
+.height-slider-tips > div:nth-child(5) {
+	left: 68.79%;
+}
+.height-slider-tips > div:nth-child(5) > span:nth-child(2) {
+	transform: translateX(-88%);
+}
+
+.height-slider-tips > div:nth-child(6) {
+	left: 85.39895%;
+}
+.height-slider-tips > div:nth-child(6) > span:nth-child(2) {
+	transform: translateX(-88%);
+}
+
+.height-slider-tips > div:nth-child(7) {
+	left: 93.25%;
+}
+.height-slider-tips > div:nth-child(7) > span:nth-child(2) {
+	transform: translateX(-44%);
+}
+
+@media (width <= 700px) {
+	.height-slider-tips > div:nth-child(2),
+	.height-slider-tips > div:nth-child(4),
+	.height-slider-tips > div:nth-child(7) {
+		display: none;
+	}
+	.height-slider-tips > div:nth-child(6) > span:nth-child(2) {
+		transform: translateX(-44%);
+	}
+}
+
+.reference-sun {
+	display: none;
+}
+
+sheet-collapsible {
+	display: flex;
+	flex-direction: column;
+	gap: 32px;
+}
+
+sheet-collapsible.align-with-fields::before {
+	content: " ";
+	white-space: pre;
+	margin-bottom: unset;
+
+	/* margin accounts for flex gap */
+	transition: margin-bottom 0s linear;
+	transition-delay: 0.2s;
+}
+sheet-collapsible:not(.collapsed).align-with-fields::before {
+	margin-bottom: -32px;
+	transition-delay: 0s;
+}
+
+sheet-collapsible:not(.init) > :not(.collapsible-button) {
+	position: absolute;
+	transform: translateY(-10000px);
+	overflow: hidden;
+}
+
+sheet-collapsible > button {
+	display: flex;
+	gap: 4px;
+
+	appearance: none;
+	padding: 0;
+	background: none;
+	border: 0;
+}
+
+sheet-collapsible > button > *:nth-child(1) {
+	flex-grow: 1;
+	font-size: 16px;
+	color: black;
+	/* grid-column: 1 / span 1; */
+}
+
+sheet-collapsible > button > *:nth-child(2) {
+	aspect-ratio: 1;
+	width: auto;
+	justify-content: center;
+	flex-grow: 0;
+}
+
+sheet-collapsible .collapsible-plus {
+	position: relative;
+}
+
+.collapsible-plus > * {
+	position: absolute;
+	width: 1ch;
+	height: 0;
+	border-bottom: 2px solid #4c4c4c;
+	line-height: 0;
+
+	transition: transform 0.2s ease-out;
+}
+
+sheet-collapsible:not(.collapsed) .collapsible-plus > *:nth-child(2) {
+	transform: rotate(270deg);
+	transform-origin: center;
+}
+
+sheet-collapsible > .collapsible-content {
+	grid-column: 1 / span 2;
+}
+
+sheet-collapsible:not(.collapsed) .collapsible-content {
+	height: var(--collapsible-computed-height);
+	visibility: unset;
+	transition: height 0.2s ease-out;
+}
+
+sheet-collapsible.init.collapsed .collapsible-content {
+	height: 0;
+	/* for tab select */
+	visibility: hidden;
+	transition: visibility 0s linear, height 0.2s ease-out;
+	transition-delay: 0.2s, 0s;
+}
+
+sheet-collapsible .collapsible-content {
+	overflow: hidden;
+	transition: height 0.2s ease-in;
+}
+
+sheet-collapsible.collapsed {
+	row-gap: 0;
+	transition: row-gap 0s linear;
+	transition-delay: 0.2s;
+}
+
+.censor {
+	filter: blur(6px) contrast(0.75) brightness(1.15);
+	opacity: 0.45;
+	transition: filter 75ms ease-out, opacity 75ms ease-out;
+}
+
+.censor:hover,
+.censor:active,
+.censor:focus,
+.censor:focus-within {
+	opacity: 1;
+	filter: none;
+}
+
+.sex-selector {
+	width: calc(var(--bar-width));
+	border: 2px solid black;
+	padding: 4px;
+}
+
+.sex-selector .reference {
+	/* idk where -4px comes from, but it makes the stuff aligned */
+	height: calc((var(--sheet-input-actual-height) + var(--collection-gap)) * 5 - 16px - 4px);
+	position: relative;
+
+	display: flex;
+	justify-content: center;
+}
+
+.sex-selector .reference .border-decoration {
+	border: 2px solid black;
+	position: absolute;
+	margin-bottom: 4px;
+	top: 0;
+	bottom: 0;
+	left: 0;
+	right: 0;
+}
+
+.sex-selector .reference > video {
+	position: absolute;
+	top: 0;
+	bottom: 0;
+	height: 100%;
+	padding: 1em;
+	filter: brightness(0) saturate(100%) invert(63%) sepia(59%) saturate(1969%) hue-rotate(325deg) brightness(101%) contrast(101%);
+}
+
+button.form-button {
+	appearance: none;
+	background: none;
+	border: 0;
+	padding: 0;
+	margin: 0;
+}
+
+button.form-button > .submit-form-text {
+	font-size: 16px;
+	justify-content: center;
+	color: black;
+	cursor: pointer;
+}
+
+.controls-separator {
+	border: 0;
+	border-top: 1px solid black;
+	height: 0;
+	margin: calc(var(--bar-height) / 2) 0 calc(var(--bar-height) / 2) 0;
+}
+
+button.form-button:active > .submit-form-text {
+	opacity: 0.8;
+	border: 2px dashed black;
+}
+
+#submit-key {
+	white-space: pre;
+	justify-content: start;
+	font-size: 16px;
+	color: black;
+}
+
+.hidden {
+	visibility: hidden;
+}
+
+input:disabled {
+	cursor: not-allowed;
+}
+.bar.disabled {
+	filter: brightness(0.95);
+}
+
+.open-existing {
+	display: grid;
+	grid-template-columns: repeat(2, minmax(0, 1fr));
+	gap: 1em;
+}
+
+@media (width <= 700px) {
+	#open-form > span {
+		display: none;
+	}
+}
+
+#open-form {
+	font-size: 16px;
+	line-height: 1.16;
+}
+
+.displaynone {
+	display: none;
+}
