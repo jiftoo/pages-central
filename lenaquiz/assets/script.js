@@ -42,8 +42,7 @@ async function parseTranslationMap() {
 	return true;
 }
 
-function app() {
-	console.log("app init");
+function defineElements() {
 	class SheetSlider extends HTMLElement {
 		constructor() {
 			super();
@@ -61,10 +60,10 @@ function app() {
 			const mid = this.getAttribute("mid");
 			const end = this.getAttribute("end");
 			let textArray;
-			if (this.getAttribute("text")) {
-				textArray = TRANSLATION_MAP[nameAttribute].text.split(",");
+			if (TRANSLATION_MAP[nameAttribute].text == nameAttribute) {
+				textArray = this.getAttribute("text")?.split(",") ?? [""];
 			} else {
-				textArray = [""];
+				textArray = TRANSLATION_MAP[nameAttribute].text.split(",");
 			}
 
 			const div = document.createElement("div");
@@ -160,7 +159,7 @@ function app() {
 			if (this.getAttribute("max-length")) {
 				input.setAttribute("maxlength", this.getAttribute("max-length"));
 			}
-			input.placeholder = TRANSLATION_MAP[nameAttribute].placeholder ?? "";
+			input.placeholder = this.getAttribute("placeholder") ? TRANSLATION_MAP[nameAttribute].placeholder ?? "" : "";
 			div.appendChild(input);
 			if (this.getAttribute("note") != null) {
 				const note = document.createElement("div");
@@ -221,9 +220,14 @@ function app() {
 			select.name = nameAttribute;
 			this.input = select;
 			select.classList.add("sheet-select");
-			const options = TRANSLATION_MAP[nameAttribute].options;
-			console.log("options", options);
+			let options;
+			if (TRANSLATION_MAP[nameAttribute].options == nameAttribute) {
+				options = this.getAttribute("options").split(",");
+			} else {
+				options = TRANSLATION_MAP[nameAttribute].options.split(",");
+			}
 			const englishOptions = this.getAttribute("options").split(",");
+			console.log(options, englishOptions);
 			for (const v of options) {
 				const option = document.createElement("option");
 				option.value = englishOptions[options.indexOf(v)];
@@ -317,7 +321,10 @@ function app() {
 	customElements.define("sheet-text-input", SheetTextInput);
 	customElements.define("sheet-select", SheetSelect);
 	customElements.define("sheet-collapsible", SheetCollapsible);
+}
 
+function app() {
+	console.log("app init");
 	function fillForm(data) {
 		for (const [k, v] of Object.entries(data)) {
 			const el = document.querySelector(`[name="${k}"]`);
@@ -438,8 +445,8 @@ function app() {
 			});
 
 		document.getElementById("controls").remove();
-		document.querySelectorAll("input, select").forEach((el) => (el.disabled = true));
-		document.querySelectorAll(".bar").forEach((el) => el.classList.add("disabled"));
+		document.querySelectorAll("#main-form input, #main-form select").forEach((el) => (el.disabled = true));
+		document.querySelectorAll("#main-form .bar").forEach((el) => el.classList.add("disabled"));
 	} else {
 		loadFormFromLocal(document.getElementById("main-form"));
 
@@ -454,9 +461,19 @@ function app() {
 	});
 }
 
+let loadFired = false;
+window.addEventListener("load", () => (loadFired = true));
+
 parseTranslationMap().then((continueInit) => {
 	if (continueInit) {
-		app();
+		defineElements();
+		if (loadFired) {
+			app();
+		} else {
+			window.addEventListener("load", () => {
+				app();
+			});
+		}
 	} else {
 		console.log("abort init");
 	}
