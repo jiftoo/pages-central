@@ -16,7 +16,7 @@
 					<option value="ru">Русский</option>
 				</select>
 				<script>
-					const lang = new URLSearchParams(window.location.search).get("lang") ?? "en";
+					const lang = new URLSearchParams(window.location.search).get("lang") ?? PREFERRED_LANG;
 					document.getElementById("language-selector").value = lang;
 					document.getElementById("language-selector").addEventListener("change", () => {
 						let params = new URLSearchParams(window.location.search);
@@ -24,7 +24,7 @@
 						window.location.search = params.toString();
 					});
 				</script>
-				<div class="h1"><h1>Lena quiz v0.1.2</h1></div>
+				<div class="h1"><h1>Lena quiz v0.1.3</h1></div>
 				<h3>[fill this in]</h3>
 			</header>
 			<div id="header-slot">
@@ -126,9 +126,7 @@
 								<img src="assets/sun.png" class="height-reference reference-sun height-reference-variable" style="--ref-scale-base: 971447075.43" />
 								<img src="assets/betelgeuse.png" class="height-reference reference-sun height-reference-variable" style="--ref-scale-base: 111400000000" />
 							</div>
-							<sheet-slider form="none" id="height-slider" no-label start="pink" mid="yellow" end="crimson"></sheet-slider>
-
-							<input id="height-slider-proxy" name="Height" type="text" hidden />
+							<sheet-slider name="Height" id="height-slider" no-label start="pink" mid="yellow" end="crimson"></sheet-slider>
 
 							<div class="height-slider-tips">
 								<div>
@@ -179,7 +177,6 @@
 							</script>
 							<script>
 								const f = (x) => 1 / 5000 ** ((x + Math.min(x * 10, 0.3)) ** 4);
-								document.querySelector("#height-slider-proxy").value = "150";
 								document.querySelector("#height-slider").addEventListener("input", function () {
 									document.querySelectorAll(".height-reference").forEach((v) => v.style.setProperty("--ref-scale-const-mult", (+this.value + 1) ** (1 / 4)));
 
@@ -195,7 +192,6 @@
 										}
 									}
 									const centimetres = (1 / f(+this.value)) * 150;
-									document.querySelector("#height-slider-proxy").value = centimetres;
 									document.querySelectorAll(".height-counter > .counter").forEach((v) => (v.textContent = `${formatSIUnit(centimetres)}`));
 
 									document.querySelectorAll(".height-reference-variable").forEach((v) => v.style.setProperty("--ref-scale", f(+this.value)));

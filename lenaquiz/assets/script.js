@@ -1,6 +1,8 @@
 // const BACKEND_URL = "http://localhost:3000";
 const BACKEND_URL = "https://bbaoj8pdkv97c2v9l0sm.containers.yandexcloud.net";
 
+const PREFERRED_LANG = navigator.language.split("-")[0];
+console.log("PREFERRED_LANG", PREFERRED_LANG);
 let TRANSLATION_MAP;
 
 async function parseTranslationMap() {
@@ -159,7 +161,11 @@ function defineElements() {
 			if (this.getAttribute("max-length")) {
 				input.setAttribute("maxlength", this.getAttribute("max-length"));
 			}
-			input.placeholder = this.getAttribute("placeholder") ? TRANSLATION_MAP[nameAttribute].placeholder ?? "" : "";
+			if (TRANSLATION_MAP[nameAttribute].placeholder == nameAttribute) {
+				input.placeholder = this.getAttribute("placeholder") ?? "";
+			} else {
+				input.placeholder = TRANSLATION_MAP[nameAttribute].placeholder;
+			}
 			div.appendChild(input);
 			if (this.getAttribute("note") != null) {
 				const note = document.createElement("div");
@@ -381,7 +387,7 @@ function app() {
 			body: new URLSearchParams(data),
 		}).then((v) => v.text());
 
-		const lang = new URLSearchParams(window.location.search).get("lang") ?? "en";
+		const lang = new URLSearchParams(window.location.search).get("lang") ?? PREFERRED_LANG;
 
 		document.querySelector("#submit-key").classList.remove("hidden");
 		document.querySelector("#submit-key > span").innerText = "Your form is saved at: ";
