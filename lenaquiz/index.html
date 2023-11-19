@@ -2,6 +2,7 @@
 <html lang="en">
 	<head>
 		<meta charset="UTF-8" />
+		<link rel="icon" type="image/png" href="/assets/favicon.png" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
 		<link rel="stylesheet" href="assets/style.css" />
 		<title>Lena quiz</title>
@@ -10,7 +11,20 @@
 	<body>
 		<main>
 			<header>
-				<div class="h1"><h1>Lena quiz v0.1.1</h1></div>
+				<select id="language-selector">
+					<option value="en">English</option>
+					<option value="ru">Русский</option>
+				</select>
+				<script>
+					const lang = new URLSearchParams(window.location.search).get("lang") ?? "en";
+					document.getElementById("language-selector").value = lang;
+					document.getElementById("language-selector").addEventListener("change", () => {
+						let params = new URLSearchParams(window.location.search);
+						params.set("lang", document.getElementById("language-selector").value);
+						window.location.search = params.toString();
+					});
+				</script>
+				<div class="h1"><h1>Lena quiz v0.1.2-pre</h1></div>
 				<h3>[fill this in]</h3>
 			</header>
 			<div id="header-slot">
@@ -40,10 +54,14 @@
 				</div>
 			</div>
 			<script>
+				function backToEditing() {
+					let lang = new URLSearchParams(window.location.search).get("lang") ?? "en";
+					window.location.search = `?lang=${lang}`;
+				}
 				if (new URLSearchParams(window.location.search).get("key")) {
 					document.getElementById("header-slot").outerHTML = `
 					<div class="open-existing">
-						<button id="go-back" class="form-button grid-col-2" onclick="window.location.search = ''">
+						<button id="go-back" class="form-button grid-col-2" onclick="backToEditing()">
 							<span>&nbsp;</span>
 							<div class="submit-form-text bar">Back to editing</div>
 						</button>
@@ -227,7 +245,7 @@
 					<sheet-slider
 						name="Intelligence"
 						text="Homer (simpson),High schooler, ,Homer (poet), ,"
-						note="<img src='gigabrain.jpeg' style='height: 100%' />"
+						note="<img src='assets/gigabrain.jpeg' style='height: 100%' />"
 						start="lime"
 						mid="#414288"
 						end="#3265bd"
@@ -279,7 +297,7 @@
 				</div>
 				<div id="controls" style="display: contents">
 					<div class="grid-col-2 controls-separator"></div>
-					<button id="submit-form" class="form-button grid-col-auto">
+					<button id="submit-form" class="form-button grid-col-auto" type="button">
 						<div class="submit-form-text bar grid-col-auto">Submit</div>
 					</button>
 					<div class="bar hidden" id="submit-key">

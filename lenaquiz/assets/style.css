@@ -10,9 +10,15 @@
 	font-weight: bold;
 }
 
+@font-face {
+	font-family: "Monocraft";
+	src: url("Monocraft-no-ligatures.ttf");
+	font-weight: normal;
+}
+
 * {
 	box-sizing: border-box;
-	font-family: "Minecraft", "Arial", serif;
+	font-family: "Minecraft", "Monocraft", "Arial", serif;
 }
 
 body {
@@ -635,4 +641,11 @@ input:disabled {
 
 .displaynone {
 	display: none;
+}
+
+#language-selector {
+	border: 1px solid black;
+	background-color: inherit;
+	margin-left: auto;
+	display: block;
 }
