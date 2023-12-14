@@ -1,15 +1,16 @@
 // const BACKEND_URL = "http://localhost:3000";
-const BACKEND_URL = "https://bbaoj8pdkv97c2v9l0sm.containers.yandexcloud.net";
+const BACKEND_URL = "https://bbas6e6edh5ckvgrgrid.containers.yandexcloud.net/";
 
-const PREFERRED_LANG = navigator.language.split("-")[0];
-console.log("PREFERRED_LANG", PREFERRED_LANG);
 let TRANSLATION_MAP;
 
 async function parseTranslationMap() {
-	TRANSLATION_MAP = new URLSearchParams(window.location.search).get("lang");
-	if (!TRANSLATION_MAP) {
-		window.location.search = "?lang=en";
+	const query = new URLSearchParams(window.location.search);
+	if (!query.get("lang")) {
+		query.set("lang", PREFERRED_LANG);
+		window.location.search = query.toString();
 		return false;
+	} else {
+		TRANSLATION_MAP = query.get("lang");
 	}
 
 	const handler = {
@@ -331,7 +332,7 @@ function defineElements() {
 
 function app() {
 	console.log("app init");
-	function fillForm(data) {
+	window.fillForm = function fillForm(data) {
 		for (const [k, v] of Object.entries(data)) {
 			const el = document.querySelector(`[name="${k}"]`);
 			if (el == null) {
@@ -339,12 +340,16 @@ function app() {
 				continue;
 			}
 			el.value = v;
+			if (k == "Height") {
+				// update the visial scale
+				document.querySelector("#height-slider").dispatchEvent(new Event("input"));
+			}
 		}
 
 		window.dispatchEvent(new CustomEvent("form-loaded"));
-	}
+	};
 
-	function collectFormData(form) {
+	window.collectFormData = function collectFormData(form) {
 		const data = new FormData(form);
 		let entries = [...data.entries()];
 		const set = new Set();
@@ -377,42 +382,50 @@ function app() {
 		});
 
 		return Object.fromEntries(entries);
-	}
+	};
 
-	async function submitForm(form) {
+	window.submitForm = async function submitForm(form) {
 		let data = collectFormData(form);
 		// console.log(entries);
-		let formKey = await fetch(BACKEND_URL, {
+		let [status, formKey] = await fetch(BACKEND_URL, {
 			method: "POST",
 			body: new URLSearchParams(data),
-		}).then((v) => v.text());
+		}).then((v) => [v.status, v.text()]);
 
-		const lang = new URLSearchParams(window.location.search).get("lang") ?? PREFERRED_LANG;
+		if (status == 200) {
+			const lang = new URLSearchParams(window.location.search).get("lang") ?? PREFERRED_LANG;
 
-		document.querySelector("#submit-key").classList.remove("hidden");
-		document.querySelector("#submit-key > span").innerText = "Your form is saved at: ";
-		document.querySelector("#submit-key > a").innerText = formKey;
-		document.querySelector("#submit-key > a").href = "?lang=" + lang + "&key=" + formKey;
+			document.querySelector("#submit-key").classList.remove("hidden");
+			document.querySelector("#submit-key > span").innerText = "Your form is saved at: ";
+			document.querySelector("#submit-key > a").innerText = formKey;
+			document.querySelector("#submit-key > a").href = "?lang=" + lang + "&key=" + formKey;
+		} else {
+			console.error("form submission failed", status);
+			document.querySelector("#submit-key").classList.remove("hidden");
+			document.querySelector("#submit-key > span").innerText = "Failed to save form: ";
+			document.querySelector("#submit-key > a").innerText = status;
+			document.querySelector("#submit-key > a").removeAttribute("href");
+		}
 
 		// display as type
 		// const x = Object.fromEntries(entries.map(([k, v, type]) => [k, type]));
 		// console.log(x);
-	}
+	};
 
-	function saveFormLocal(form) {
+	window.saveFormLocal = function saveFormLocal(form) {
 		let data = collectFormData(form);
 		localStorage.setItem("lena-form", JSON.stringify(data));
-	}
+	};
 
-	function loadFormFromLocal(form) {
+	window.loadFormFromLocal = function loadFormFromLocal(form) {
 		let data = JSON.parse(localStorage.getItem("lena-form"));
 		if (data == null) {
 			return;
 		}
 		fillForm(data);
-	}
+	};
 
-	function enableInputTracking() {
+	window.enableInputTracking = function enableInputTracking() {
 		let change = true;
 		// only check for changes every second
 		setInterval(() => (change = true), 1000);
@@ -431,13 +444,13 @@ function app() {
 		for (const el of document.querySelectorAll("select")) {
 			el.addEventListener("change", () => reschedule());
 		}
-	}
+	};
 
 	setTimeout(enableInputTracking, 0);
 
-	async function checkFormExists(key) {
+	window.checkFormExists = async function checkFormExists(key) {
 		return await fetch(BACKEND_URL + "?key=" + key).then((v) => v.ok);
-	}
+	};
 
 	document.getElementById("main-form").addEventListener("submit", (ev) => ev.preventDefault());
 
