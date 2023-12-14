@@ -390,7 +390,7 @@ function app() {
 		let [status, formKey] = await fetch(BACKEND_URL, {
 			method: "POST",
 			body: new URLSearchParams(data),
-		}).then((v) => [v.status, v.text()]);
+		}).then((v) => v.text().then((text) => [v.status, text]));
 
 		if (status == 200) {
 			const lang = new URLSearchParams(window.location.search).get("lang") ?? PREFERRED_LANG;
