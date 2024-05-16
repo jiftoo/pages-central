@@ -1,0 +1,1 @@
+._grid_jw89q_1{display:grid;grid-template-rows:repeat(5,1fr);grid-template-columns:repeat(2,1fr);gap:1em}._grid_jw89q_1>*:nth-child(1){grid-column:1 / span 2}._grid_jw89q_1>*:nth-child(6){grid-column:1 / span 2}._grid_jw89q_1>*:nth-child(7){grid-column:1 / span 2}

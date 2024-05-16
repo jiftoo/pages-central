@@ -1,0 +1,30 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<meta charset="UTF-8" />
+		<title>Wasm test</title>
+	</head>
+	<body>
+		<script type="module">
+			import init, {generate} from "./hashcash_constant.js";
+			await init();
+
+			async function run() {
+				let loop = async (i) => {
+					let t1 = performance.now();
+					const v = await generate("i want to prove i did some work!", "le seed", i, 20, 20);
+					console.log("generated", v, "in", performance.now() - t1, "ms");
+					document.getElementById("output").innerText += `generated ${JSON.stringify(v)} in ${
+						performance.now() - t1
+					}ms\n`;
+				};
+				for (let i = 0; i < 5; i++) {
+					setTimeout(loop, 0, i)
+				}
+			}
+			window.run = run;
+		</script>
+		<button onclick="run()">Begin</button>
+		<pre id="output"></pre>
+	</body>
+</html>

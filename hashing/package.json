@@ -1,0 +1,14 @@
+{
+  "name": "hashcash-constant",
+  "version": "0.1.0",
+  "files": [
+    "hashcash_constant_bg.wasm",
+    "hashcash_constant.js",
+    "hashcash_constant.d.ts"
+  ],
+  "module": "hashcash_constant.js",
+  "types": "hashcash_constant.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
